@@ -96,7 +96,7 @@ deleteTaskCTA.addEventListener("click", () => {
 
 const signOutButton = document.querySelector('.sign-out-cta');
 signOutButton.addEventListener('click', () => {
-  window.location.href = './login.html';
+  window.location.href = '../databse/logout.php';
 });
 
 document.addEventListener('DOMContentLoaded', function () {

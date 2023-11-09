@@ -1,9 +1,9 @@
 <?php
 session_start();
-$servername = "localhost";
+$servername = "localhost:3307";
+$username = "root";
+$password = "pass123";
 $database = "imk_todolist";
-$username = "root"; // Change this variable to $username for the correct parameter
-$password = "";
 
 $conn = mysqli_connect($servername, $username, $password, $database);
 

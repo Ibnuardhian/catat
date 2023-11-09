@@ -1,5 +1,5 @@
 <?php
-$sql = "SELECT taskid, tasklabel, taskstatus, createdate FROM your_table";
+$sql = "SELECT taskid, tasklabel, taskstatus, createdate FROM tasks";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {

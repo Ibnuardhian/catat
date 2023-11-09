@@ -7,15 +7,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST["email"]);
     $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
     $confirmpassword = $_POST["confirmpassword"];
+    $query_sql = "INSERT INTO users (email, password) VALUES ('$email', '$hashedPassword')";
 
-    $duplicate = mysqli_query($conn, "SELECT * FROM tb_user WHERE email = '$email'");
+    $duplicate = mysqli_query($conn, "SELECT * FROM users WHERE email = '$email'");
     if (mysqli_num_rows($duplicate) > 0) {
         echo "<script> alert('Email Has Already Been Taken'); </script>";
     } else {
         if (password_verify($confirmpassword, $password)) {
-            $query = "INSERT INTO tb_user (firstname, lastname, email, password) VALUES ('$firstName', '$lastName', '$email', '$password')";
+            $query = "INSERT INTO users (firstname, lastname, email, password) VALUES ('$firstName', '$lastName', '$email', '$password')";
             if (mysqli_query($conn, $query)) {
-                header("location: login.html");
+                header("location: ../pages/login.html");
                 exit;
             } else {
                 echo "Error: " . $query . "<br>" . mysqli_error($conn);
