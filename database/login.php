@@ -12,4 +12,5 @@ if (mysqli_num_rows($result) > 0){
 } else {
     echo "<center><h1> Email atau Password Salah. Silakan Input Dengan Benar.<h1><button><strong><a href='login.html'>Login</a></strong></button></center>";
 }
+?>
 
