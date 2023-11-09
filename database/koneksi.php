@@ -1,13 +1,14 @@
 <?php
+session_start();
 $servername = "localhost";
-$database = "db_users";
-$email = "root";
+$database = "imk_todolist";
+$username = "root"; // Change this variable to $username for the correct parameter
 $password = "";
 
-$conn = mysqli_connect($servername, $email, $password , $database);
+$conn = mysqli_connect($servername, $username, $password, $database);
 
 if (!$conn){
-    die("Koneksi Gagal : " . mysqli_connect_error());
+    die("Koneksi Gagal: " . mysqli_connect_error());
 } else {
     echo "Koneksi Berhasil";
 }

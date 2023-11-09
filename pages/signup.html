@@ -23,25 +23,19 @@
         class="left-column flex flex-column height-full justify-center items-center"
       >
         <h1 class="welcoming-title">Halo! Silahkan daftar</h1>
-        <form class="form" autocomplete="off">
+        <form class="form" autocomplete="off" method="post" action="../database/signup.php">
+          <label for="firstname" class="label">Nama Depan</label>
+          <input type="firstname" name="firstname" id="firstname" class="input" required />
+          <label for="lastname" class="label">Nama Belakang</label>
+          <input type="lastname" name="lastname" id="lastname" class="input" required />
           <label for="email" class="label">Email</label>
           <input type="email" name="email" id="email" class="input" required />
-
           <label for="password" class="label">Password</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            class="input"
-            required
-          />
-
+          <input type="password" name="password" id="password" class="input"required />
+          <label for="confirmpassword" class="label">Confirm Password</label>
+          <input type="password" name="confirmpassword" id="confirmpassword" class="input" required />
           <button
-            type="submit"
-            class="button regular-button pink-background cta-btn"
-          >
-            Sign up
-          </button>
+            type="submit" class="button regular-button pink-background cta-btn">Sign up</button>
         </form>
         <p class="login-prompt">
           Already have an account?
