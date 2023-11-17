@@ -252,6 +252,19 @@ body.overflow-hidden {
   margin-right: -16px;
 }
 
+.cta-button {
+  margin-right: 50px; /* Menetapkan jarak kanan antara tombol */
+  margin-bottom: 10px; /* Menetapkan jarak bawah antara tombol */
+}
+
+/* Opsional: Untuk memberikan jarak seimbang di sekitar tombol */
+.text-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .set-task-overlay .header {
   font-weight: 600;
   font-size: var(--font-size-24);

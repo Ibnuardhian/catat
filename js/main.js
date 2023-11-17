@@ -5,13 +5,11 @@ const boardView = document.getElementById("board-view");
 const addTaskCTA = document.getElementById("add-task-cta");
 const setTaskOverlay = document.getElementById("set-task-overlay");
 const closeButtons = document.querySelectorAll(".close-button");
-const statusSelect = document.getElementById("status-select");
 const statusDropdown = document.getElementById("status-dropdown");
 const taskItems = document.querySelectorAll(".task-item");
 const viewTaskOverlay = document.getElementById("view-task-overlay");
 const deleteTaskCTA = document.getElementById("delete-task-cta");
 const notification = document.getElementById("notification");
-// the current active overlay
 let activeOverlay = null;
 // Menambahkan event listener ke tombol tugas untuk menampilkan tugas detail
 const taskButtons = document.querySelectorAll(".task-button");
@@ -19,13 +17,6 @@ const taskNameView = document.getElementById("taskNameElement");
 const taskDescriptionView = document.getElementById("taskDescription");
 const taskDueDateView = document.getElementById("taskDueDate");
 const taskStatusView = document.querySelector(".status-value");
-// Mengambil data tugas dari query string
-const taskName = getParameterByName("name");
-const taskDescription = getParameterByName("description");
-const dlHari = getParameterByName("due-date-day");
-const dlJam = getParameterByName("due-date-time");
-const selectedStatus = getParameterByName("status-option");
-//** event listeners **//
 
 // radio buttons for view option
 radioViewOptions.forEach((radioButton) => {
@@ -50,23 +41,18 @@ radioViewOptions.forEach((radioButton) => {
 addTaskCTA.addEventListener("click", () => {
   setTaskOverlay.classList.remove("hide");
   activeOverlay = setTaskOverlay;
-  // disable scrolling for content behind the overlay
   document.body.classList.add("overflow-hidden");
 });
 
 // close buttons inside overlays
 closeButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    activeOverlay.classList.add("hide");
+    var overlay = button.closest(".overlay");
+    overlay.classList.add("hide");
     activeOverlay = null;
-    // reenable scrolling
     document.body.classList.remove("overflow-hidden");
+    location.reload();
   });
-});
-
-// open status dropdown
-statusSelect.addEventListener("click", () => {
-  statusDropdown.classList.toggle("hide");
 });
 
 // click a task
@@ -80,120 +66,256 @@ taskItems.forEach((task) => {
   });
 });
 
+const signOutButton = document.querySelector(".sign-out-cta");
+signOutButton.addEventListener("click", () => {
+  window.location.href = "login.html";
+});
+
+// Fungsi untuk menutup overlay
+function closeOverlay(button) {
+  var overlay = button.closest(".overlay");
+  overlay.classList.add("hide");
+  activeOverlay = null;
+  document.body.classList.remove("overflow-hidden");
+}
+
+// Fungsi untuk menambahkan task baru
+function addTask(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const description = document.getElementById("taskDescription").value;
+  const dueDateTime = document.getElementById("due-date-time").value;
+  const dueDateDay = document.getElementById("due-date-day").value;
+
+  if (name && description && dueDateTime && dueDateDay) {
+    const task = {
+      name: name,
+      description: description,
+      dueDateTime: dueDateTime,
+      dueDateDay: dueDateDay,
+    };
+
+    let taskNumber = 1;
+    while (localStorage.getItem(`taskUser${taskNumber}`)) {
+      taskNumber++;
+    }
+
+    localStorage.setItem(`taskUser${taskNumber}`, JSON.stringify([task]));
+
+    displayTasks();
+    // Mengosongkan formulir setelah menambahkan tugas
+    document.getElementById("name").value = "";
+    document.getElementById("taskDescription").value = "";
+    document.getElementById("due-date-time").value = "";
+    document.getElementById("due-date-day").value = "";
+    const addButton = document.getElementById("addTaskButton");
+    location.reload();
+    closeOverlay(addButton);
+  }
+}
+
+// Fungsi untuk menampilkan task dari local storage
+function displayTasks() {
+  const toDoTaskList = document.getElementById("toDoTaskList");
+  toDoTaskList.innerHTML = "";
+
+  let taskNumber = 1;
+  while (localStorage.getItem(`taskUser${taskNumber}`)) {
+    const tasks = JSON.parse(localStorage.getItem(`taskUser${taskNumber}`));
+
+    tasks.forEach((task) => {
+      const taskButtonHTML = `
+      <button class="task-button" data-task-number="${taskNumber}">
+          <p class="task-name">${task.name}</p>
+          <p class="task-due-date">Due on ${task.dueDateDay} jam ${task.dueDateTime}</p>
+          <iconify-icon icon="material-symbols:arrow-back-ios-rounded" 
+            style="color: black" 
+            width="18" 
+            height="18" 
+            class="arrow-icon">
+          </iconify-icon>
+        </button>
+      `;
+
+      const newTaskItem = document.createElement("li");
+      newTaskItem.classList.add("task-item");
+      newTaskItem.innerHTML = taskButtonHTML;
+      // Menambahkan event listener untuk setiap tombol tugas yang dibuat
+      newTaskItem.querySelector(".task-button").addEventListener("click", function(event) {
+        viewTaskOverlay.classList.remove("hide");
+        activeOverlay = viewTaskOverlay;
+        document.body.classList.add("overflow-hidden");
+        clickedTaskNumber = event.currentTarget.dataset.taskNumber; // Set nilai clickedTaskNumber
+        console.log(`Tugas diklik dengan key taskUser${clickedTaskNumber}`);
+          const taskName = document.getElementById("taskNameElement");
+          const taskDescription = document.getElementById("taskDescriptionElement");
+          const dueDate = document.getElementById("dueDateElement");
+          taskName.textContent = task.name;
+          taskDescription.textContent = task.description;
+          dueDate.textContent = `Due on ${task.dueDateDay} jam ${task.dueDateTime}`; // Set due date
+        });
+
+      toDoTaskList.appendChild(newTaskItem);
+    });
+    taskNumber++;
+  }
+}
+function otherFunction() {
+  if (clickedTaskNumber !== null) {
+    console.log(`Nilai clickedTaskNumber adalah: ${clickedTaskNumber}`);
+    // Lakukan sesuatu dengan clickedTaskNumber di sini
+  } else {
+    console.log("clickedTaskNumber belum diatur.");
+  }
+}
+// Panggil fungsi displayTasks saat halaman dimuat
+displayTasks();
+
+//Menambahkan event listener pada tombol "Add task"
+document.getElementById("addTaskButton").addEventListener("click", addTask);
+function deleteTaskFromLocalStorage(clickedTaskNumber) {
+  const taskKeyToDelete = `taskUser${clickedTaskNumber}`;
+  const taskToRemove = JSON.parse(localStorage.getItem(taskKeyToDelete));
+}
+
 // delete a task
 deleteTaskCTA.addEventListener("click", () => {
-  activeOverlay.classList.add("hide");
-  activeOverlay = null;
-  // reenable scrolling
-  document.body.classList.remove("overflow-hidden");
-  // show notification & hide it after a while
-  notification.classList.add("show");
-  setTimeout(() => {
-    notification.classList.remove("show");
-  }, 3000);
+  // Memeriksa apakah clickedTaskNumber sudah diatur sebelumnya
+  if (clickedTaskNumber !== null) {
+    // Menghapus data dari localStorage yang sesuai dengan clickedTaskNumber
+    localStorage.removeItem(`taskUser${clickedTaskNumber}`);
+    
+    // Menghapus tampilan task yang dihapus dari DOM
+    const taskToDelete = document.querySelector(`[data-task-number="${clickedTaskNumber}"]`);
+    if (taskToDelete) {
+      taskToDelete.parentElement.remove();
+    }
+      // Mengambil overlay terkait dan menyembunyikannya
+      const overlay = deleteTaskCTA.closest(".overlay");
+      if (overlay) {
+        overlay.classList.add("hide");
+        activeOverlay = null;
+      }
+      // Mengembalikan tampilan body ke normal
+      document.body.classList.remove("overflow-hidden");
+  // Memberikan notifikasi bahwa tugas telah dihapus
+  if (notification) {
+    notification.classList.add("show");
+    setTimeout(() => {
+      notification.classList.remove("show");
+      // Reload halaman setelah notifikasi hilang
+      location.reload();
+      displayTasks(); // Ini akan merefresh halaman web
+    }, 1500);
+  }
+} else {
+  console.error("Tugas tidak ditemukan.");
+}
 });
 
+const TaskFunctions = {
+  copyTaskValues: function(setTaskForm, editTaskForm) {
+    const taskNameInputSet = setTaskForm.querySelector('#name');
+    const taskDescriptionInputSet = setTaskForm.querySelector('#taskDescription');
+    const dueDateTimeInputSet = setTaskForm.querySelector('#due-date-time');
+    const dueDateDayInputSet = setTaskForm.querySelector('#due-date-day');
 
-const signOutButton = document.querySelector('.sign-out-cta');
-signOutButton.addEventListener('click', () => {
-  window.location.href = '../databse/logout.php';
-});
+    const taskNameInputEdit = editTaskForm.querySelector('#name');
+    const taskDescriptionInputEdit = editTaskForm.querySelector('#taskDescription');
+    const dueDateTimeInputEdit = editTaskForm.querySelector('#due-date-time');
+    const dueDateDayInputEdit = editTaskForm.querySelector('#due-date-day');
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Ambil elemen-elemen yang diperlukan
-  const statusLabel = document.querySelector('.label');
-  const statusDropdown = document.querySelector('.status-dropdown');
-  const radioInputs = document.querySelectorAll('.radio-input');
-  const selectedStatus = document.getElementById('selected-status');
+    taskNameInputEdit.value = taskNameInputSet.value;
+    taskDescriptionInputEdit.value = taskDescriptionInputSet.value;
+    dueDateTimeInputEdit.value = dueDateTimeInputSet.value;
+    dueDateDayInputEdit.value = dueDateDayInputSet.value;
+  },
 
-  // Tambahkan event click pada elemen "Status" untuk menampilkan atau menyembunyikan dropdown
-  statusLabel.addEventListener('click', function () {
-    statusDropdown.classList.toggle('hide');
-  });
-
-  // Tambahkan event change pada radio inputs untuk memperbarui label sesuai dengan pilihan
-  radioInputs.forEach(input => {
-    input.addEventListener('change', function () {
-      if (input.checked) {
-        statusLabel.textContent = input.value;
-        selectedStatus.textContent = input.value;
-        statusDropdown.classList.add('hide'); // Sembunyikan dropdown setelah memilih
+  hideOtherOverlays: function(editTaskOverlay) {
+    const allOverlays = document.querySelectorAll(".overlay");
+    allOverlays.forEach((overlay) => {
+      if (overlay !== editTaskOverlay) {
+        overlay.classList.add("hide");
       }
     });
-  });
-});
+  },
 
-// Fungsi untuk mendapatkan parameter dari query string
-function getParameterByName(name, url) {
-  if (!url) url = window.location.href;
-  name = name.replace(/[\[\]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
-function formatDate(inputDate) {
-  const dateParts = inputDate.split("-");
-  if (dateParts.length === 3) {
-    const year = dateParts[0];
-    const month = dateParts[1];
-    const day = dateParts[2];
-    return `${day}-${month}-${year}`;
-  } else {
-    return inputDate; // Jika format input tidak sesuai, kembalikan nilai asli
-  }
-}
-const formattedDeadline = dlHari.split('-').reverse().join('-');
+  showEditTaskOverlay: function(editTaskOverlay) {
+    editTaskOverlay.classList.remove("hide");
+    document.body.classList.add("overflow-hidden");
+  },
 
-// Membuat tombol tugas dengan template literals
-const taskButtonHTML = `
-<button class="task-button" onclick="overlayUnhide()">
-    <p class="task-name">${taskName}</p>
-    <p class="task-due-date">Due on ${dlHari} jam ${dlJam}</p>
-    <iconify-icon icon="material-symbols:arrow-back-ios-rounded" 
-      style="color: black" 
-      width="18" 
-      height="18" 
-      class="arrow-icon">
-    </iconify-icon>
-</button>
-`;
+  loadTaskDataFromLocalStorage: function(clickedTaskNumber, editTaskForm) {
+    const taskToEdit = JSON.parse(localStorage.getItem(`taskUser${clickedTaskNumber}`));
+    if (taskToEdit !== null) {
+      const taskData = taskToEdit[0];
 
-const listItemHTML = `
-<li class="task-item">
-    ${taskButtonHTML}
-</li>
-`;
+      const taskNameInputEdit = editTaskForm.querySelector('#name');
+      const taskDescriptionInputEdit = editTaskForm.querySelector('#taskDescription');
+      const dueDateTimeInputEdit = editTaskForm.querySelector('#due-date-time');
+      const dueDateDayInputEdit = editTaskForm.querySelector('#due-date-day');
 
-function overlayUnhide() {
-    viewTaskOverlay.classList.remove('hide');
-    console.log("Anjay mabar");
-}
-
-function taskExistsInList(list, taskName) {
-  const taskItems = list.querySelectorAll('.task-name');
-  for (let i = 0; i < taskItems.length; i++) {
-    if (taskItems[i].textContent === taskName) {
-      return true;
+      taskNameInputEdit.value = taskData.name;
+      taskDescriptionInputEdit.value = taskData.description;
+      dueDateTimeInputEdit.value = taskData.dueDateTime;
+      dueDateDayInputEdit.value = taskData.dueDateDay;
+    } else {
+      console.error(`Data tugas untuk taskUser${clickedTaskNumber} tidak ditemukan di localStorage.`);
     }
   }
-  return false;
-}
+};
 
-if (selectedStatus === "To do") {
-  const toDoTaskList = document.getElementById("toDoTaskList");
-  if (!taskExistsInList(toDoTaskList, taskName)) {
-    toDoTaskList.insertAdjacentHTML("beforeend", listItemHTML);
+const editTaskCTA = document.getElementById("edit-task-cta")
+// Fungsi utama dalam event listener
+editTaskCTA.addEventListener("click", () => {
+  if (clickedTaskNumber !== null) {
+    const setTaskOverlay = document.getElementById("set-task-overlay");
+    const editTaskOverlay = document.getElementById("edit-task-overlay");
+    const setTaskForm = setTaskOverlay.querySelector('form');
+    const editTaskForm = editTaskOverlay.querySelector('form');
+
+    TaskFunctions.copyTaskValues(setTaskForm, editTaskForm);
+    TaskFunctions.hideOtherOverlays(editTaskOverlay);
+    TaskFunctions.showEditTaskOverlay(editTaskOverlay);
+    TaskFunctions.loadTaskDataFromLocalStorage(clickedTaskNumber, editTaskForm);
+  } else {
+    console.error("Tugas tidak ditemukan.");
   }
-} else if (selectedStatus === "Doing") {
-  const doingTaskList = document.getElementById("doingTaskList");
-  if (!taskExistsInList(doingTaskList, taskName)) {
-    doingTaskList.insertAdjacentHTML("beforeend", listItemHTML);
-  }
-} else if (selectedStatus === "Done") {
-  const doneTaskList = document.getElementById("doneTaskList");
-  if (!taskExistsInList(doneTaskList, taskName)) {
-    doneTaskList.insertAdjacentHTML("beforeend", listItemHTML);
-  }
-}
+});
+
+// Fungsi untuk menangani klik pada tombol edit
+document.getElementById("editTaskButton").addEventListener("click", () => {
+  const editTaskForm = document.getElementById("edit-task-overlay").querySelector('form');
+  // Ambil nilai dari form
+  const taskNameInputEdit = editTaskForm.querySelector('#name').value;
+  const taskDescriptionInputEdit = editTaskForm.querySelector('#taskDescription').value;
+  const dueDateTimeInputEdit = editTaskForm.querySelector('#due-date-time').value;
+  const dueDateDayInputEdit = editTaskForm.querySelector('#due-date-day').value;
+  const taskNumber = clickedTaskNumber;
+  const allOverlays = document.querySelectorAll(".overlay");
+  // Simpan data yang diperbarui ke dalam localStorage (contoh penyimpanan)
+  const updatedTaskData = {
+    name: taskNameInputEdit,
+    description: taskDescriptionInputEdit,
+    dueDateTime: dueDateTimeInputEdit,
+    dueDateDay: dueDateDayInputEdit,
+  };
+
+  // Simpan data ke localStorage
+  localStorage.setItem(`taskUser${taskNumber}`, JSON.stringify([updatedTaskData]));;
+
+  // Tambahkan logika lain yang diperlukan untuk pembaruan data, seperti menampilkan perubahan atau mengirim data ke server, dst.
+  // Misalnya:
+  // Tampilkan perubahan data di konsol
+  console.log('Data Task yang Diperbarui:', updatedTaskData);
+  console.log('Data Task telah diperbarui di localStorage.');
+
+  // Lakukan yang lain sesuai kebutuhan, misalnya menampilkan perubahan di antarmuka pengguna
+  // Logika untuk menyembunyikan overlay dan melakukan aksi tertentu
+  allOverlays.forEach((overlay) => {
+    overlay.classList.add("hide");
+    document.body.classList.remove("overflow-hidden");
+    location.reload();
+  });
+});
