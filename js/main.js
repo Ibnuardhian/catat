@@ -578,7 +578,7 @@ doneTaskButton.addEventListener("click", () => {
       doneNotif.classList.add("show");
       setTimeout(() => {
         doneNotif.classList.remove("show");
-        //location.reload();
+        location.reload();
         displayTasks(); // Refresh daftar tugas
       }, 1500);
     }
