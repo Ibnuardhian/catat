@@ -275,21 +275,20 @@ function displayTasks() {
 
         toDoTaskList.appendChild(newTaskItem);
       });
-    }else if (key && key.startsWith("taskUserDone")) {
+    } else if (key && key.startsWith("taskUserDone")) {
       const tasks = JSON.parse(localStorage.getItem(key));
 
       tasks.forEach((task) => {
         tasksExist = true;
         const date = new Date(task.dueDateDay);
-        const formattedDueDate = `${getDayOfWeek(
-          task.dueDateDay
-        )}, ${date.getDate()} ${getMonthName(
+        const formattedDueDate = `${date.getDate()} ${getMonthName(
           task.dueDateDay
         )} ${date.getFullYear()}`;
+        const clickedDateTime = getFormattedDateTime();
         const taskButtonHTML = `
           <button class="task-button" data-task-key="${key}" status-value="done">
             <p class="task-name">${task.name}</p>
-            <p class="task-due-date">${formattedDueDate}, ${task.dueDateTime}</p>
+            <p class="task-due-date">${formattedDueDate}</p>
             <iconify-icon icon="material-symbols:arrow-back-ios-rounded" 
               style="color: black" 
               width="18" 
@@ -319,7 +318,7 @@ function displayTasks() {
             const dueDate = document.getElementById("dueDateElement");
             taskName.textContent = task.name;
             taskDescription.textContent = task.description;
-            dueDate.innerHTML = `${formattedDueDate}. Jam ${task.dueDateTime}`;
+            dueDate.innerHTML = `${clickedDateTime}`;
           });
 
         doneTaskList.appendChild(newTaskItem);
@@ -538,6 +537,27 @@ document.getElementById("confirmTaskButton").addEventListener("click", () => {
     }
   }
 });
+let clickedDateTime = '';
+
+function getFormattedDateTime() {
+  const currentDate = new Date();
+
+  const dayOfWeek = getDayOfWeek(currentDate); // Menggunakan fungsi getDayOfWeek yang sudah ada
+  const dayOfMonth = currentDate.getDate();
+  const month = getMonthName(currentDate); // Menggunakan fungsi getMonthName yang sudah ada
+  const year = currentDate.getFullYear();
+  let hours = currentDate.getHours();
+  let minutes = currentDate.getMinutes();
+
+  // Menambahkan nol di depan angka jika kurang dari 10 (untuk format 01, 02, ... 09)
+  hours = (hours < 10) ? `0${hours}` : hours;
+  minutes = (minutes < 10) ? `0${minutes}` : minutes;
+
+  const formattedDateTime = `${dayOfWeek}, ${dayOfMonth} ${month} ${year}, ${hours}:${minutes}`;
+  return formattedDateTime;
+}
+// Simpan hasil getFormattedDateTime() dalam sebuah variabel saat aplikasi pertama kali dimuat
+const staticFormattedDateTime = getFormattedDateTime();
 
 const doneTaskButton = document.getElementById("done-task-button");
 doneTaskButton.addEventListener("click", () => {
@@ -546,7 +566,6 @@ doneTaskButton.addEventListener("click", () => {
 
   if (selectedTaskIndex !== -1) {
     const selectedTask = tasksFromTodo[selectedTaskIndex];
-
     let tasksForDone = JSON.parse(localStorage.getItem("taskUserDone")) || [];
     tasksForDone.push(selectedTask);
     localStorage.setItem("taskUserDone", JSON.stringify(tasksForDone));
@@ -554,20 +573,16 @@ doneTaskButton.addEventListener("click", () => {
     tasksFromTodo.splice(selectedTaskIndex, 1);
     localStorage.setItem("taskUserTodo", JSON.stringify(tasksFromTodo));
 
-    const taskButtonToRemove = document.querySelector(`[data-task-key="${clickedTaskId}"]`);
-    if (taskButtonToRemove) {
-      taskButtonToRemove.remove();
-    }
-
     const doneNotif = document.getElementById("done-task-notification"); // ID notifikasi
     if (doneNotif) {
       doneNotif.classList.add("show");
       setTimeout(() => {
         doneNotif.classList.remove("show");
-        location.reload();
-        displayTasks(); // Refresh halaman web
+        //location.reload();
+        displayTasks(); // Refresh daftar tugas
       }, 1500);
     }
+    console.log(`Tanggal tombol diklik: ${clickedDateTime}`);
   } else {
     console.error("Tugas tidak ditemukan.");
   }
