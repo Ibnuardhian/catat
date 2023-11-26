@@ -70,15 +70,15 @@
       <!-- header -->
       <div class="max-width-container">
         <div class="header flex items-center justify-between">
-          <h1 class="title">My tasks</h1>
+          <h1 class="title">CATAT!</h1>
           <div class="buttons-container">
             <button
               id="add-task-cta"
               class="button regular-button blue-background"
             >
-              Add your Task
+              Tambah Tugas
             </button>
-            <button class="sign-out-cta">Sign out</button>
+            <button class="sign-out-cta">Kaga kepake bjir</button>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@
                 width="24"
                 height="24"
               ></iconify-icon>
-              <span>List</span>
+              <span>Tugas</span>
             </label>
           </div>
           <div class="radio-container">
@@ -121,7 +121,7 @@
                 width="24"
                 height="24"
               ></iconify-icon>
-              <span>Done</span>
+              <span>Selesai</span>
             </label>
           </div>
         </div>
@@ -133,29 +133,42 @@
           <div class="list-container pink">
               <h2 class="list-header">
                   <span class="circle pink-background"></span>
-                  <span class="text">To do</span>
+                  <span class="text">Tugas</span>
               </h2>
               <ul class="tasks-list" id="toDoTaskList">
                   <!-- Existing "To do" task items go here -->
               </ul>
         </div>
-          </div>
         </div>
-        <!-- board view -->
-        <div class="max-width-container">
-        <div id="board-view" class="board-view hide">
-          <!-- list -->
-          <div>
-            <h2 class="list-header">
-              <span class="circle green-background"></span
-              ><span class="text">Done</span>
-            </h2>
-            <ul class="tasks-list green" id="doneTaskList">
-              <!-- Existing "Done" task items go here -->
-            </ul>
-          </div>
+        </div>
       </div>
+<div class="max-width-container">
+  <div id="board-view" class="board-view hide">
+    <!-- List 1 -->
+    <div>
+      <h2 class="list-header">
+        <span class="circle green-background"></span>
+        <span class="text">Tugas selesai</span>
+      </h2>
+      <ul class="tasks-list green" id="doneTaskList1">
+        <!-- Existing Column 1 "Done" task items go here -->
+      </ul>
     </div>
+    <!-- List 2 -->
+    <div>
+      <ul class="tasks-list green" id="doneTaskList2">
+        <!-- Existing Column 2 "Done" task items go here -->
+      </ul>
+    </div>
+    <!-- List 3 -->
+    <div>
+      <ul class="tasks-list green" id="doneTaskList3">
+        <!-- Existing Column 3 "Done" task items go here -->
+      </ul>
+    </div>
+  </div>
+</div>
+
     <!-- add + update task -->
     <div id="set-task-overlay" class="overlay set-task-overlay hide">
       <div class="overlay-content pink-background">
@@ -181,8 +194,7 @@
             id="taskDescription"
             rows="8"
             class="textarea-input white-background"
-            required>
-          </textarea>
+            required></textarea>
           <h2 class="label">Due date</h2>
           <div class="divided-inputs-container">
             <div>
@@ -261,7 +273,7 @@
         </div>
       </div>
       <div class="text-center">
-        <button type="button" class="button regular-button green-background cta-button" id="confirmTaskButton">
+        <button type="submit" class="button regular-button green-background cta-button" id="confirmTaskButton">
           Confirm
         </button>
       </div>
@@ -319,7 +331,7 @@
             ></iconify-icon>
           </button>
           <button class="button regular-button pink-background cta-button" id="done-task-button" status-value="todo">
-            Mark as Done
+            Tandai selesai
           </button>
         </div>
       </div>
@@ -349,7 +361,7 @@
             <div class="flex items-center">
               <h1 class="header min-width">Status</h1>
               <p class="value status-value" id = "waktu">
-                <span class="circle pink-background"></span><span>To Do</span>
+                <span class="circle green-background"></span><span>Done</span>
               </p>
             </div>
             <div class="control-buttons-container">
@@ -365,7 +377,7 @@
                 ></iconify-icon>
               </button>
               <button class="button regular-button pink-background cta-button" id="todo-task-button" status-value="todo">
-                Mark as Todo
+                Belum selesai
               </button>
             </div>
           </div>
