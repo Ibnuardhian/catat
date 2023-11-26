@@ -8,7 +8,9 @@ const closeButtons = document.querySelectorAll(".close-button");
 const statusDropdown = document.getElementById("status-dropdown");
 const taskItems = document.querySelectorAll(".task-item");
 const viewTaskOverlay = document.getElementById("view-task-overlay");
+const viewDoneTaskOverlay = document.getElementById("view-done-task-overlay");
 const deleteTaskCTA = document.getElementById("delete-task-cta");
+const deleteDoneTaskCTA =document.getElementById("done-delete-task-cta")
 const addNotif = document.getElementById("add-task-notification");
 const delNotif = document.getElementById("delete-task-notification");
 const errNotif = document.getElementById("error-task-notification");
@@ -305,17 +307,17 @@ function displayTasks() {
         newTaskItem
           .querySelector(".task-button")
           .addEventListener("click", function () {
-            viewTaskOverlay.classList.remove("hide");
-            activeOverlay = viewTaskOverlay;
+            viewDoneTaskOverlay.classList.remove("hide");
+            activeOverlay = viewDoneTaskOverlay;
             document.body.classList.add("overflow-hidden");
             const taskId = task.id;
             setClickedTaskId(taskId);
             console.log(`Task clicked with key: ${clickedTaskId}`);
-            const taskName = document.getElementById("taskNameElement");
+            const taskName = document.getElementById("taskNameDone");
             const taskDescription = document.getElementById(
-              "taskDescriptionElement"
+              "taskDescriptionDone"
             );
-            const dueDate = document.getElementById("dueDateElement");
+            const dueDate = document.getElementById("dueDateDone");
             taskName.textContent = task.name;
             taskDescription.textContent = task.description;
             dueDate.innerHTML = `${clickedDateTime}`;
@@ -369,30 +371,32 @@ function deleteTaskById(id) {
   }
 }
 
-// Function to handle delete task button click
-deleteTaskCTA.addEventListener("click", () => {
+// Function to handle delete task
+function handleDeleteTask() {
   if (clickedTaskId !== null) {
     deleteTaskById(clickedTaskId);
-    // Mengambil overlay terkait dan menyembunyikannya
-    const overlay = deleteTaskCTA.closest(".overlay");
+    const overlay = this.closest(".overlay");
     if (overlay) {
       overlay.classList.add("hide");
       activeOverlay = null;
     }
-    // Mengembalikan tampilan body ke normal
     document.body.classList.remove("overflow-hidden");
-    // Memberikan notifikasi bahwa tugas telah dihapus
     if (delNotif) {
       delNotif.classList.add("show");
       setTimeout(() => {
         delNotif.classList.remove("show");
-        displayTasks(); // Ini akan merefresh halaman web
+        displayTasks();
       }, 1500);
     }
   } else {
     console.error("Tugas tidak ditemukan.");
   }
-});
+}
+
+// Adding event listeners to delete buttons
+deleteTaskCTA.addEventListener("click", handleDeleteTask);
+deleteDoneTaskCTA.addEventListener("click", handleDeleteTask);
+
 
 const TaskFunctions = {
   copyTaskValues: function (setTaskForm, editTaskForm) {
@@ -594,4 +598,41 @@ doneTaskButton.addEventListener("click", () => {
 
   const doneButton = document.getElementById("done-task-button");
   closeOverlay(doneButton);
+});
+
+const todoTaskButton = document.getElementById("todo-task-button");
+todoTaskButton.addEventListener("click", () => {
+  const tasksFromDone = JSON.parse(localStorage.getItem("taskUserDone")) || [];
+  const selectedTaskIndex = tasksFromDone.findIndex(task => task.id === clickedTaskId);
+
+  if (selectedTaskIndex !== -1) {
+    const selectedTask = tasksFromDone[selectedTaskIndex];
+    let tasksForTodo = JSON.parse(localStorage.getItem("taskUserTodo")) || [];
+    tasksForTodo.push(selectedTask);
+    localStorage.setItem("taskUserTodo", JSON.stringify(tasksForTodo));
+
+    tasksFromDone.splice(selectedTaskIndex, 1);
+    localStorage.setItem("taskUserDone", JSON.stringify(tasksFromDone));
+
+    const todoNotif = document.getElementById("todo-task-notification"); // ID notifikasi
+    if (todoNotif) {
+      todoNotif.classList.add("show");
+      setTimeout(() => {
+        todoNotif.classList.remove("show");
+        location.reload();
+        displayTasks(); 
+      }, 1500);
+    }
+    console.log(`Tanggal tombol diklik: ${clickedDateTime}`);
+  } else {
+    console.error("Tugas tidak ditemukan.");
+  }
+
+  const doneTaskList = document.getElementById("doneTaskList");
+  if (doneTaskList) {
+    doneTaskList.remove();
+  }
+
+  const todoButton = document.getElementById("todo-task-button");
+  closeOverlay(todoButton);
 });
