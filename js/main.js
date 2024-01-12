@@ -3,6 +3,8 @@ const radioViewOptions = document.querySelectorAll("input[name='view-option']");
 const listView = document.getElementById("list-view");
 const boardView = document.getElementById("board-view");
 const addTaskCTA = document.getElementById("add-task-cta");
+//tombol tambah yang icon
+const addTaskCTAicon = document.getElementById("add-task-cta-icon");
 const setTaskOverlay = document.getElementById("set-task-overlay");
 const closeButtons = document.querySelectorAll(".close-button");
 const statusDropdown = document.getElementById("status-dropdown");
@@ -22,6 +24,11 @@ const taskNameView = document.getElementById("taskNameElement");
 const taskDescriptionView = document.getElementById("taskDescription");
 const taskDueDateView = document.getElementById("taskDueDate");
 const taskStatusView = document.querySelector(".status-value");
+
+//Click logo ke Landing Page CATAT!
+document.getElementById('logo').addEventListener('click', function() {
+  window.location.href = '../landing-page-CATAT!/index.html';
+  });
 
 // radio buttons for view option
 radioViewOptions.forEach((radioButton) => {
@@ -44,6 +51,12 @@ radioViewOptions.forEach((radioButton) => {
 
 // add task
 addTaskCTA.addEventListener("click", () => {
+  setTaskOverlay.classList.remove("hide");
+  activeOverlay = setTaskOverlay;
+  document.body.classList.add("overflow-hidden");
+});
+//add task icon
+addTaskCTAicon.addEventListener("click", () => {
   setTaskOverlay.classList.remove("hide");
   activeOverlay = setTaskOverlay;
   document.body.classList.add("overflow-hidden");
@@ -108,6 +121,19 @@ function showNotification(notificationId) {
     }, 1500);
   }
 }
+document.addEventListener("DOMContentLoaded", function () {
+  const isiDeskripsi = document.getElementById("taskDescription");
+  const taskDescriptionElement = document.getElementById("taskDescriptionElement");
+  const taskDescriptionInputEdit = document.getElementById("#taskDescription");
+  const heightLimit = 200;
+
+  isiDeskripsi.addEventListener("input", function () {
+    isiDeskripsi.style.height = "";
+    isiDeskripsi.style.height = Math.min(isiDeskripsi.scrollHeight, heightLimit) + "px";
+    taskDescriptionElement.textContent=isiDeskripsi.value;
+    taskDescriptionInputEdit.textContent=isiDeskripsi.value;
+  });
+});
 
 // Fungsi untuk menambahkan task baru
 function addTask(event) {
@@ -159,6 +185,7 @@ function addTask(event) {
     localStorage.setItem(todoKey, JSON.stringify(taskList));
 
     displayTasks();
+
     // Mengosongkan formulir setelah menambahkan tugas
     document.getElementById("name").value = "";
     document.getElementById("taskDescription").value = "";
@@ -167,12 +194,17 @@ function addTask(event) {
     const addButton = document.getElementById("addTaskButton");
     closeOverlay(addButton);
     // Menampilkan notifikasi bahwa tugas telah ditambahkan
+    removeQueryParameters();
     showNotification("add-task-notification")
   } else {
     closeOverlay(document.getElementById("addTaskButton")); // Tutup overlay
     // Menampilkan notifikasi bahwa input tanggal tidak valid
     showNotification("error-task-notification");
   }
+}
+function removeQueryParameters() {
+  const urlWithoutQuery = window.location.href.split('?')[0];
+  history.replaceState({}, document.title, urlWithoutQuery);
 }
 
 let clickedTaskId = null; // Deklarasi variabel sebagai variabel global
@@ -397,14 +429,12 @@ deleteDoneTaskCTA.addEventListener("click", handleDeleteTask);
 const TaskFunctions = {
   copyTaskValues: function (setTaskForm, editTaskForm) {
     const taskNameInputSet = setTaskForm.querySelector("#name");
-    const taskDescriptionInputSet =
-      setTaskForm.querySelector("#taskDescription");
+    const taskDescriptionInputSet = setTaskForm.querySelector("#taskDescription");
     const dueDateTimeInputSet = setTaskForm.querySelector("#due-date-time");
     const dueDateDayInputSet = setTaskForm.querySelector("#due-date-day");
 
     const taskNameInputEdit = editTaskForm.querySelector("#name");
-    const taskDescriptionInputEdit =
-      editTaskForm.querySelector("#taskDescription");
+    const taskDescriptionInputEdit = editTaskForm.querySelector("#taskDescription");
     const dueDateTimeInputEdit = editTaskForm.querySelector("#due-date-time");
     const dueDateDayInputEdit = editTaskForm.querySelector("#due-date-day");
 
@@ -626,3 +656,71 @@ todoTaskButton.addEventListener("click", () => {
 });
 
 
+//Function untuk Panduan TOUR CATAT!
+function startTour() {  
+  const driver = window.driver.js.driver;
+
+  const driverObj = driver({
+  showProgress: true,
+  steps: [
+    { element: '#logo', 
+      popover: { title: 'Logo', 
+                description: 'Memberikan akses cepat kepada pengguna untuk memahami lebih lanjut tentang aplikasi dan mungkin mendapatkan panduan penggunaan.', 
+                side: "left", align: 'start' }},
+    { element: '#pandu', 
+      popover: { title: 'Tur Interaktif', 
+                description: 'Memberikan panduan untuk pengguna, seperti saat ini sedang membantu pengguna memahami fitur-fitur dan cara menggunakan aplikasi dengan efisien.', 
+                side: "bottom", align: 'start' }},
+    { element: '#add-task-cta', 
+      popover: { title: 'Tambahkan Tugas', 
+                description: 'Digunakan untuk menambahkan tugas atau kegiatan baru ke dalam aplikasi yang terdiri dari Judul, Deskripsi dan Tenggat Waktu.', 
+                side: "bottom", align: 'start' }},
+    { element: '#add-task-cta-icon', 
+      popover: { title: 'Shortcut Tambahkan Tugas', 
+                description: 'Sama dengan tombol "Tambahkan Tugas", tetapi letaknya lebih dekat dengan tombol lain. Memberikan pintasan yang lebih mudah dijangkau pengguna.', 
+                side: "bottom", align: 'start' }},
+    { element: '#bagianTugas', 
+      popover: { title: 'Tugas', 
+                description: 'Memberikan visibilitas terhadap tugas-tugas yang sedang berlangsung atau yang masih harus diselesaikan, membantu pengguna untuk merencanakan dan mengelola waktu dengan efektif.', 
+                side: "bottom", align: 'start' }},
+    { element: '#bagianSelesai', 
+      popover: { title: 'Selesai', 
+                description: 'Memberikan pengguna gambaran lengkap tentang tugas-tugas yang sudah diselesaikan, membantu untuk melacak progres dan pencapaian.', 
+                side: "bottom", align: 'start' }},
+    { element: '#list-view', 
+      popover: { title: 'Daftar Tugas yang Sedang Berlangsung Sebelum Masa Tenggat Waktu', 
+                description: 'Membantu pengguna mengidentifikasi tugas yang mungkin memerlukan lebih banyak perhatian atau yang memiliki waktu pengerjaan yang lebih panjang.', 
+                side: "bottom", align: 'start' }},
+    { popover: { title: 'Jadilah Lebih Produktif dengan CATAT!', description: 'CATAT! akan menjadi pengingat setia yang mengawasimu dengan teliti. Dengan notifikasinya yang cerdas, kamu tidak akan pernah lagi melewatkan momen yang penting. Nikmati pengalaman mencatat yang menyenangkan dengan fitur-fitur hebat yang akan membuat hidupmu lebih terorganisir dan sukses!' } }
+  ]
+});
+
+driverObj.drive();
+    }
+
+  document.addEventListener("DOMContentLoaded", function() {
+        // Event listener for the "Panduan CATAT!" button to start the tour
+        const startTourButton = document.getElementById("pandu");
+        startTourButton.addEventListener("click", startTour);
+
+        
+      });
+
+//highlight bagian
+const driverObj = driver({
+  popoverClass: "driverjs-theme",
+  stagePadding: 0,
+  onDestroyed: () => {
+    document?.activeElement?.blur();
+  }
+});
+
+name.addEventListener("focus", () => {
+  driverObj.highlight({
+    element: nameEl,
+    popover: {
+      title: "Name",
+      description: "Enter your name here",
+    },
+  });
+});
