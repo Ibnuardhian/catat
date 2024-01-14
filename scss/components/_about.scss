@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*=============== ABOUT ===============*/
 .about{
     &__container{
@@ -13,4 +14,21 @@
         width: 200px;
         justify-self: center;
     }
+=======
+/*=============== ABOUT ===============*/
+.about{
+    &__container{
+        row-gap: 2rem;
+    }
+    &__data{
+        text-align: center;
+    }
+    &__description{
+        margin-bottom: var(--mb-2);
+    }
+    &__img{
+        width: 200px;
+        justify-self: center;
+    }
+>>>>>>> fe549b6f3060299f44caa78f5e0f7dbcf48d35b3
 }
