@@ -1,5 +1,30 @@
+/*=============== VARIABLES CSS ===============*/
+:root {
+  --header-height: 3.5rem;
+
+  /*========== Colors ==========*/
+  --hue: 14;
+  --first-color: hsl(var(--hue), 91%, 54%);
+  --first-color-alt: hsl(var(--hue), 91%, 50%);
+  --title-color: hsl(var(--hue), 4%, 100%);
+  --text-color: hsl(var(--hue), 4%, 85%);
+  --text-color-light: hsl(var(--hue), 4%, 55%);
+
+  /*Green gradient*/
+  --body-color: linear-gradient(90deg, #fdd2b1 0%, #d9a379 100%);
+  --container-color: linear-gradient(136deg, #CE5A67 0%, #CE5A67 100%);
+  
+  /*Red gradient*/
+  /* --body-color: linear-gradient(90deg, hsl(360, 28%, 40%) 0%, hsl(18, 28%, 40%) 100%);
+  --container-color: linear-gradient(136deg, hsl(360, 28%, 35%) 0%, hsl(18, 28%, 35%) 100%); */
+
+  /*Black solid*/
+  /* --body-color: hsl(30, 8%, 8%);
+  --container-color: hsl(30, 8%, 10%); */
+}
+
 body {
-  background-color: #F4BF96;
+  background: var(--body-color);
   font-family: 'Jost', sans-serif;
 
 }
@@ -19,8 +44,8 @@ body.overflow-hidden {
 
 .head .title {
   flex: 1;
-  text-align: left;
-  margin-right: 75%;
+  text-align: center;
+  margin-right: 40%;
   cursor: pointer;
   color : #CE5A67;
 }
@@ -37,6 +62,7 @@ body.overflow-hidden {
   color: white;
   border-radius: 5px;
   cursor: pointer;
+  margin-right: 15%;
   transition: background-color 0.3s, color 0.3s;
 }
 
@@ -57,7 +83,6 @@ body.overflow-hidden {
   background-color: #CE5A67;
   box-shadow: none;
   border: none;
-  margin-right: 10px;
 }
 
 /* header */
@@ -74,7 +99,6 @@ body.overflow-hidden {
   text-align: center;
   width: 100%;
 }
-
 
 
 /* radio buttons for view options */
@@ -131,7 +155,6 @@ body.overflow-hidden {
 .radio-buttons-container .radio-input:checked + label[for="list"].radio-label {
   background-color: #CE5A67;
 }
-
 
 
 .radio-buttons-container .radio-input:checked + label[for="board"].radio-label {
@@ -191,6 +214,10 @@ body.overflow-hidden {
   text-align: left;
 }
 
+.nav__logo-img{
+  width: 1.25rem;
+}
+
 .list-view .task-item .task-button {
   display: grid;
   /* 3 equal columns */
@@ -202,8 +229,9 @@ body.overflow-hidden {
 }
 
 .list-view .task-item:hover {
-  background-color: rgb(173, 173, 173);
-  transition: 0.2s ease;
+  background-color: rgb(194, 194, 194);
+  opacity: 0.5;
+  transition: 0.4s ease;
   padding: 10px;
   border-radius: 10px;
 }
@@ -249,6 +277,7 @@ body.overflow-hidden {
   display: flex;
   align-items: center;
 }
+
 
 /* board view */
 .board-view {
@@ -317,8 +346,19 @@ body.overflow-hidden {
   display: grid;
   place-items: center;
   /* if content is longer than screen height, enable scrollbar */
-  overflow-y: auto;
+  overflow: hidden;
   box-shadow: black;
+  transition: opacity .5s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .overlay.hide {
@@ -330,7 +370,7 @@ body.overflow-hidden {
 }
 
 .overlay-content {
-  border: 1px solid #d18c56;
+  border: 3px solid #d18c56;
   border-radius: var(--radius-8);
   padding: var(--space-32);
   max-width: 500px;
@@ -348,44 +388,20 @@ body.overflow-hidden {
   margin-left: 380px;
 }
 
+.edit-task-overlay .close-button:hover {
+  background-color: #CE5A67;
+  transition: 0.2s ease;
+  transform: scale(0.9);
+}
+
 /* Add overlay */
 .set-task-overlay .close-button {
   top: 20px; /* Sesuaikan dengan posisi vertikal yang diinginkan */
   right: 20px; /* Sesuaikan dengan posisi horizontal yang diinginkan */
   margin-left: 380px;
-}
-
-
-.view-task-overlay .overlay-content {
-  /* Membuat tata letak flexbox */
-  display: flex;
-  flex-direction: column;
-   /* Mengatur konten ke kiri */
-  gap: var(--space-16); /* Ruang antar elemen */
-}
-
-.view-task-overlay .overlay-content .overlay-button {
-  /* Mengatur tombol-tombol ke kanan */
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  gap: var(--space-16);
-  margin-bottom: -50px;
-}
-
-
-.set-task-overlay, .edit-task-overlay, .view-task-overlay {
-  background-color: rgba(244, 191, 150, 0.7); /* Nilai alpha (0.8) menentukan tingkat transparansi */
-  /* Gaya atau styling tambahan */
-  backdrop-filter: blur(10px);
-  border: none;
-}
-
-
-.set-task-overlay .close-button {
   background-color: #FFF2D8; /* Mengubah warna latar belakang */
   /* Gaya atau styling tambahan */
-  border: none;
+  border: 2px solid #d18c56;
   box-shadow: none;
 }
 
@@ -401,38 +417,83 @@ body.overflow-hidden {
 }
 
 
-.edit-task-overlay .close-button:hover {
-  background-color: #CE5A67;
-  transition: 0.2s ease;
-  transform: scale(0.9);
+.view-task-overlay .overlay-content {
+  /* Membuat tata letak flexbox */
+  display: flex;
+  flex-direction: column;
+   /* Mengatur konten ke kiri */
+  gap: var(--space-16); /* Ruang antar elemen */
+  width: 90%;
+  overflow-y: auto; 
+  max-height: 95vh; 
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  overflow-y: auto; /* Menambahkan scrolling vertical jika kontennya lebih besar dari layar */
+  max-height: 95vh; /* Menentukan tinggi maksimum konten agar tidak melewati layar */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
 }
+
+.view-task-overlay .overlay-content .overlay-button {
+  /* Mengatur tombol-tombol ke kanan */
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: var(--space-16);
+  margin-bottom: -50px;
+}
+
+
+
+.set-task-overlay, .edit-task-overlay, .view-task-overlay {
+  background: transparent;
+  backdrop-filter: blur(10px);
+  /* Gaya atau styling tambahan */
+  backdrop-filter: blur(10px);
+  border: none;
+}
+
 
 .edit-task-overlay .close-button, .edit-task-overlay .delete-button{
   background-color: #FFF2D8; /* Mengubah warna latar belakang */
   /* Gaya atau styling tambahan */
-  border: none;
   box-shadow: none;
+  border: 2px solid #d18c56;
 }
 
 .view-task-overlay .close-button,.view-task-overlay .edit-button, .view-task-overlay .delete-button {
   background-color: #FFF2D8; /* Mengubah warna latar belakang */
   /* Gaya atau styling tambahan */
-  border: none;
+  border: 2px solid #d18c56;
+
   box-shadow: none;
+}
+
+.view-task-overlay .close-button{
+font-size: 20px;
 }
 
 .view-task-overlay .close-button:hover{
   background-color: #CE5A67;
+  border: none;
   transition: 0.2s ease;
   transform: scale(0.9);
 }
 .view-task-overlay .edit-button:hover{
   background-color: #9FBB73;
+  border: none;
   transition: 0.2s ease;
   transform: scale(0.9);
 }
 .view-task-overlay .delete-button:hover{
   background-color: #CE5A67;
+  border: none;
   transition: 0.2s ease;
   transform: scale(0.9);
 }
@@ -584,7 +645,6 @@ input [type="text"]{
 }
 
 
-
 .textarea-input {
   background-color: #FFF2D8;
   border: none;
@@ -645,8 +705,20 @@ input [type="text"]{
   top: 0;
 }
 
+
+
 /* media queries */
 @media (min-width: 768px) {
+
+  .set-task-overlay .overlay-content{
+    max-width: 100%;
+    max-height: 95vh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
   .list-view .task-item .task-button {
     /* align items to top in firefox */
     align-items: center;
@@ -710,14 +782,12 @@ input [type="text"]{
 
 @media (max-width: 767px) {
   .board-view {
-    grid-template-columns: 1fr; /* Mengubah menjadi satu kolom pada layar kecil */
-    gap: var(--space-16); /* Atur ruang antara item */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(11.25rem, 100%), 1fr));
+    grid-gap: var(--space-8); /* Atur ruang antara item */
     padding: 0 var(--space-8); /* Sesuaikan padding agar lebih sesuai */
   }
 
-  .board-view .tasks-list {
-    margin-bottom: var(--space-24); /* Tambahkan margin bawah untuk memisahkan list */
-  }
 }
 
 /* Tambahan */
@@ -728,3 +798,133 @@ input [type="text"]{
 }
 
 
+@media (max-width: 767px) {
+
+  .head .title {
+    margin-right: 20%;
+  }
+
+  .head .button {
+    padding: 8px 16px;
+    font-size: 14px;
+    margin-right: 0%;
+
+  }
+
+  .set-task-overlay .overlay-content {
+    max-width: 100%;
+    overflow-y: auto; 
+    max-height: 95vh; 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+
+  .view-task-overlay .close-button,
+  .view-task-overlay .edit-button,
+  .view-task-overlay .delete-button {
+    font-size: 1px;
+      }
+  
+  .set-task-overlay .close-button,
+  .edit-task-overlay .close-button,
+  .edit-task-overlay .delete-button,
+  .set-task-overlay .header {
+    top: 20px; /* Sesuaikan dengan posisi vertikal yang diinginkan */
+  right: 20px; /* Sesuaikan dengan posisi horizontal yang diinginkan */
+    margin-left: 0;
+  }
+
+  .overlay-content {
+    max-width: 100%;
+    padding: var(--space-16);
+    overflow-y: auto;
+    overflow-y: auto;
+  }
+
+  .divided-inputs-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .divided-inputs-container > div {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .divided-inputs-container input {
+    width: 50%;
+    margin-left: calc((100% - 50%) / 2);
+  }
+
+  .textarea-container {
+    margin-top: 10px;
+  }
+
+  .cta-button {
+    margin-bottom: 20px;
+  }
+
+  .view-task-overlay .overlay-content {
+    gap: var(--space-8);
+  }
+
+  .view-task-overlay .value {
+    margin-top: 5px;
+  }
+
+  .view-task-overlay .status-value {
+    margin-top: 10px;
+  }
+
+  .view-task-overlay .control-buttons-container {
+    margin-top: var(--space-16);
+  }
+
+  .notification {
+    padding: var(--space-16);
+    height: auto;
+  }
+}
+
+
+@media (max-width: 375px) {
+  .set-task-overlay .close-button,
+  .set-task-overlay .header {
+    top: 10px;
+    right: 10px;
+    margin-left: 0;
+  }
+
+
+  .set-task-overlay .overlay-content {
+    max-width: 100%;
+    overflow-y: auto;
+    max-height: 95vh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .divided-inputs-container input {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .textarea-container {
+    margin-top: 10px;
+  }
+
+  .cta-button {
+    margin-bottom: 20px;
+  }
+
+  .notification {
+    padding: var(--space-16);
+    height: auto;
+  }
+
+}

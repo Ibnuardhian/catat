@@ -152,10 +152,15 @@ body {
   padding-inline: var(--space-16);
   height: var(--input-height);
 }
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* Aligns the button to the right */
+  height: 10px; /* Ad the height to fit the button */
+}
 
 .circle-button {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   border-radius: 100%;
   padding: var(--space-8);
 }

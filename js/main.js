@@ -27,7 +27,7 @@ const taskStatusView = document.querySelector(".status-value");
 
 //Click logo ke Landing Page CATAT!
 document.getElementById('logo').addEventListener('click', function() {
-  window.location.href = '../landing-page-CATAT!/index.html';
+  window.location.href = '/';
   });
 
 // radio buttons for view option
@@ -103,6 +103,16 @@ const signOutButton = document.querySelector(".sign-out-cta");
 signOutButton.addEventListener("click", () => {
   window.location.href = "login.html";
 });
+document.addEventListener("click", function (event) {
+  // Ambil elemen yang diklik
+  var clickedElement = event.target;
+
+  // Periksa apakah elemen yang diklik bukan bagian dari .overlay-content
+  if (!clickedElement.closest(".overlay-content")) {
+    // Panggil fungsi closeOverlay jika tidak ada .overlay-content yang diklik
+    closeOverlay(clickedElement);
+  }
+});
 
 // Fungsi untuk menutup overlay
 function closeOverlay(button) {
@@ -111,6 +121,9 @@ function closeOverlay(button) {
   activeOverlay = null;
   document.body.classList.remove("overflow-hidden");
 }
+
+
+
 function showNotification(notificationId) {
   const notification = document.getElementById(notificationId);
   if (notification) {
@@ -121,19 +134,69 @@ function showNotification(notificationId) {
     }, 1500);
   }
 }
-document.addEventListener("DOMContentLoaded", function () {
-  const isiDeskripsi = document.getElementById("taskDescription");
-  const taskDescriptionElement = document.getElementById("taskDescriptionElement");
-  const taskDescriptionInputEdit = document.getElementById("#taskDescription");
-  const heightLimit = 200;
 
-  isiDeskripsi.addEventListener("input", function () {
-    isiDeskripsi.style.height = "";
-    isiDeskripsi.style.height = Math.min(isiDeskripsi.scrollHeight, heightLimit) + "px";
-    taskDescriptionElement.textContent=isiDeskripsi.value;
-    taskDescriptionInputEdit.textContent=isiDeskripsi.value;
-  });
+document.addEventListener("DOMContentLoaded", function () {
+  let isiDeskripsi = document.getElementById("taskDescription");
+  const taskDescriptionElement = document.getElementById("taskDescriptionElement");
+  const heightLimit = 200;
+  const minHeight = 45;
+
+  // Fungsi untuk menetapkan tinggi minimum
+  function setMinHeight(element, minHeight) {
+    element.style.height = "";
+    element.style.height = Math.max(minHeight, element.scrollHeight) + "px";
+  }
+
+  // Fungsi untuk mengonversi newline (\n) menjadi tag <br>
+  function convertNewlineToBr(text) {
+    return text.replace(/\n/g, "<br>").replace(/\r/g, "");
+  }
+
+  function handleDescriptionInput() {
+    setMinHeight(isiDeskripsi, minHeight);
+
+    const convertedText = convertNewlineToBr(isiDeskripsi.value);
+    taskDescriptionElement.innerHTML = convertedText;
+
+    // Atur tinggi untuk mempertahankan overflow pada taskDescriptionElement
+    const currentHeight = taskDescriptionElement.offsetHeight;
+    const scrollHeight = taskDescriptionElement.scrollHeight;
+
+    if (currentHeight < scrollHeight) {
+      taskDescriptionElement.style.height = scrollHeight + "px";
+    }
+  }
+
+  // Menangani kasus di mana elemen dengan id "taskDescription" bisa berada di "set-task-overlay" atau "edit-task-overlay"
+  if (isiDeskripsi) {
+    isiDeskripsi.addEventListener("input", handleDescriptionInput);
+
+    // Set tinggi minimum saat halaman dimuat
+    setMinHeight(isiDeskripsi, minHeight);
+  }
+  // Jika tidak ditemukan di "set-task-overlay", coba cari di "edit-task-overlay"
+  else {
+    const setTaskOverlay = document.getElementById("set-task-overlay");
+    const editTaskOverlay = document.getElementById("edit-task-overlay");
+
+    if (setTaskOverlay) {
+      isiDeskripsi = setTaskOverlay.querySelector("#taskDescription");
+    } else if (editTaskOverlay) {
+      isiDeskripsi = editTaskOverlay.querySelector("#taskDescription");
+    }
+
+    if (isiDeskripsi) {
+      isiDeskripsi.addEventListener("input", handleDescriptionInput);
+
+      // Set tinggi minimum saat halaman dimuat
+      setMinHeight(isiDeskripsi, minHeight);
+    }
+  }
 });
+
+
+
+
 
 // Fungsi untuk menambahkan task baru
 function addTask(event) {
@@ -144,25 +207,20 @@ function addTask(event) {
   const dueDateTime = document.getElementById("due-date-time").value;
   const dueDateDay = document.getElementById("due-date-day").value;
 
-  const currentDate = new Date(); // Mendapatkan tanggal dan waktu saat ini
+  const currentDate = new Date(); // Get the current date and time
 
   const taskDueDate = new Date(`${dueDateDay}T${dueDateTime}`);
-  
-  if (
-    name &&
-    description &&
-    dueDateTime &&
-    dueDateDay &&
-    taskDueDate >= currentDate
-  ) {
-  
+
+  // Check if the required fields are not empty
+  if (name && dueDateTime && dueDateDay && taskDueDate >= currentDate) {
+
     // Generate a unique UUID for the task
-    const id = uuidv4(); // Menggunakan uuidv4() yang telah dimuat secara global
+    const id = uuidv4();
 
     const task = {
       id: id,
       name: name,
-      description: description,
+      description: description, // It's okay if description is empty
       dueDateDay: dueDateDay,
       dueDateTime: dueDateTime,
     };
@@ -186,22 +244,27 @@ function addTask(event) {
 
     displayTasks();
 
-    // Mengosongkan formulir setelah menambahkan tugas
+    // Clear the form after adding the task
     document.getElementById("name").value = "";
     document.getElementById("taskDescription").value = "";
     document.getElementById("due-date-time").value = "";
     document.getElementById("due-date-day").value = "";
+
     const addButton = document.getElementById("addTaskButton");
     closeOverlay(addButton);
-    // Menampilkan notifikasi bahwa tugas telah ditambahkan
+
+    // Display notification that the task has been added
     removeQueryParameters();
     showNotification("add-task-notification")
   } else {
-    closeOverlay(document.getElementById("addTaskButton")); // Tutup overlay
-    // Menampilkan notifikasi bahwa input tanggal tidak valid
+    // Close the overlay if validation fails
+    closeOverlay(document.getElementById("addTaskButton"));
+    
+    // Display notification for invalid input
     showNotification("error-task-notification");
   }
 }
+
 function removeQueryParameters() {
   const urlWithoutQuery = window.location.href.split('?')[0];
   history.replaceState({}, document.title, urlWithoutQuery);
@@ -657,7 +720,7 @@ todoTaskButton.addEventListener("click", () => {
 
 
 //Function untuk Panduan TOUR CATAT!
-function startTour() {  
+function startTour1() {  
   const driver = window.driver.js.driver;
 
   const driverObj = driver({
@@ -672,10 +735,6 @@ function startTour() {
                 description: 'Memberikan panduan untuk pengguna, seperti saat ini sedang membantu pengguna memahami fitur-fitur dan cara menggunakan aplikasi dengan efisien.', 
                 side: "bottom", align: 'start' }},
     { element: '#add-task-cta', 
-      popover: { title: 'Tambahkan Tugas', 
-                description: 'Digunakan untuk menambahkan tugas atau kegiatan baru ke dalam aplikasi yang terdiri dari Judul, Deskripsi dan Tenggat Waktu.', 
-                side: "bottom", align: 'start' }},
-    { element: '#add-task-cta-icon', 
       popover: { title: 'Shortcut Tambahkan Tugas', 
                 description: 'Sama dengan tombol "Tambahkan Tugas", tetapi letaknya lebih dekat dengan tombol lain. Memberikan pintasan yang lebih mudah dijangkau pengguna.', 
                 side: "bottom", align: 'start' }},
@@ -696,15 +755,74 @@ function startTour() {
 });
 
 driverObj.drive();
-    }
+}
 
-  document.addEventListener("DOMContentLoaded", function() {
-        // Event listener for the "Panduan CATAT!" button to start the tour
-        const startTourButton = document.getElementById("pandu");
-        startTourButton.addEventListener("click", startTour);
+function startTour2() {  
+  const driver = window.driver.js.driver;
+ // Check if the cookie is set
+if (document.cookie.includes("tourSeen=true")) {
+  // If the cookie is present, exit the function
+  return;
+}
+  const driverObj = driver({
+  showProgress: true,
+  steps: [
+    { element: '#name', 
+      popover: { title: 'Judul  Tugas', 
+                description: 'Pilih judul yang singkat dan jelas untuk setiap tugas Anda. Judul ini akan membantu Anda dengan cepat mengidentifikasi tugas tersebut.', 
+                side: "left", align: 'start' }},
+    { element: '#taskDescription', 
+      popover: { title: 'Deskripsi Tugas', 
+                description: 'Jelaskan tugas Anda secara rinci di bagian ini. Tambahkan informasi tambahan yang mungkin diperlukan untuk menyelesaikan tugas dengan sukses.', 
+                side: "bottom", align: 'start' }},
+    { element: '#due-date-time', 
+      popover: { title: 'Jam', 
+                description: 'Tentukan jam kapan tugas harus selesai. Ini membantu Anda membuat jadwal harian yang efektif dan memastikan tugas-tugas Anda diselesaikan tepat waktu.', 
+                side: "bottom", align: 'start' }},
+    { element: '#due-date-day', 
+      popover: { title: 'Tanggal', 
+                description: 'Atur tanggal tenggat waktu untuk tugas Anda di sini. Dengan menetapkan tanggal, Anda dapat merencanakan tugas jangka panjang dan mengelola waktu dengan lebih baik.', 
+                side: "bottom", align: 'start' }},
+    { element: '#addTaskButton', 
+      popover: { title: 'Tombol Tambah', 
+                description: 'Tekan tombol "Tambah" setelah mengisi judul, deskripsi, jam, dan tanggal untuk menyimpan tugas Anda. Dengan menekan tombol ini, tugas Anda akan ditambahkan ke daftar tugas Anda.', 
+                side: "bottom", align: 'start' }},
+    { element: '#button-close', 
+      popover: { title: 'Tombol Tutup', 
+                description: 'Setelah menyelesaikan tugas atau jika Anda ingin menutup tugas tanpa menambahkannya, gunakan tombol "Close". Ini akan membantu Anda menyusun daftar tugas Anda dengan lebih rapi.', 
+                side: "bottom", align: 'start' }},
+    { popover: { title: 'Selamat bekerja dengan To-Do-List kami!', description: ' Jika Anda memiliki pertanyaan lebih lanjut atau membutuhkan bantuan, jangan ragu untuk menghubungi kami. Semoga hari Anda penuh produktivitas!' } }
+  ]
+});
 
-        
-      });
+driverObj.drive();
+const expirationDate = new Date();
+  expirationDate.setMonth(expirationDate.getMonth() + 6);
+ // Set a cookie to indicate that the user has seen the tour
+  document.cookie = `tourSeen=true; expires=${expirationDate.toUTCString()}; path=/`;
+}
+//button startTour1
+document.addEventListener("DOMContentLoaded", function() {
+    // Event listener for the "Panduan CATAT!" button to start the tour
+    const startTourButton = document.getElementById("pandu");
+    startTourButton.addEventListener("click", function() {
+        // Panggil fungsi untuk memulai tur
+        startTour1();
+
+        // Klik otomatis tombol bagianTugas
+        const bagianTugasButton = document.getElementById("bagianTugas");
+        bagianTugasButton.click();
+    });
+});
+
+// Check for the existence of the "tourSeen" cookie when the DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+  if (!document.cookie.includes("tourSeen=true")) {
+    // If the cookie is not present, add an event listener for the tour button
+    const startTourButton = document.getElementById("add-task-cta");
+    startTourButton.addEventListener("click", startTour2);
+  }
+});
 
 //highlight bagian
 const driverObj = driver({
